@@ -3,6 +3,7 @@
 
 module OGS.API.Fetch where
 
+import           OGS.API.Games.Types
 import           OGS.API.Types
 
 import           Data.Aeson

@@ -9,10 +9,11 @@ module OGS.API.Games.Types
 
 import           Data.Aeson
 import           OGS.API.Types
+import qualified Data.Text as T
 
 data Game = Game
     { id    :: Integer
-    , name  :: String
+    , name  :: T.Text
     , black :: PlayerID
     , white :: PlayerID
     } deriving (Eq, Show, Ord)

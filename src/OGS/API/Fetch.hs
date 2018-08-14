@@ -16,6 +16,9 @@ import           Network.HTTP.Client
 import           Network.HTTP.Client.TLS
 import           Network.HTTP.Simple
 
+import Data.Maybe
+import Pipes
+
 -- https://online-go.com/api/v1/players/435842/games/
 
 type URL = String
@@ -33,22 +36,13 @@ fetchPage url = do
 
     return $ getResponseBody response
 
-fetchPages :: URL -> IO [GamesResponse]
+fetchPages :: URL -> Producer GamesResponse IO ()
 fetchPages url = do
-    page <- fetchPage url
-
-    case (nextPage page) of
-      Nothing   -> return [page]
-      Just next -> do
-        rest <- fetchPages next
-        return $ [page] ++ rest
-
-fetchGames :: PlayerID -> IO [Game]
-fetchGames id = do
-    responses <- fetchPages (playerGames id) 
-    
-    return $ join $ mapM games responses
-
+  page <- lift $ fetchPage url
+  yield page
+  case (nextPage page) of
+    Just nextURL -> fetchPages nextURL
+    Nothing      -> return ()
 
 djanatyn :: PlayerID
 djanatyn = 435842

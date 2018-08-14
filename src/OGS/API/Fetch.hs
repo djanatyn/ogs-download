@@ -44,5 +44,12 @@ fetchPages url = do
     Just nextURL -> fetchPages nextURL
     Nothing      -> return ()
 
-djanatyn :: PlayerID
-djanatyn = 435842
+responsesToGames :: Pipe GamesResponse Game IO ()
+responsesToGames = forever $ do
+    response <- await
+    mapM_ yield $ games response
+
+fetchGames :: PlayerID -> Producer Game IO ()
+fetchGames id = (fetchPages $ playerGames id) >-> responsesToGames
+
+-- runEffect $ for (fetchGames 435842) (lift . putStrLn . show)

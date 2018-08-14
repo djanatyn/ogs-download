@@ -16,12 +16,17 @@ import           Network.HTTP.Client
 import           Network.HTTP.Client.TLS
 import           Network.HTTP.Simple
 
+import Control.Concurrent (threadDelay)
+
 import Data.Maybe
 import Pipes
 
 -- https://online-go.com/api/v1/players/435842/games/
 
 type URL = String
+
+delay :: Int
+delay = (1000000 * 5) -- 5 seconds
 
 api :: URL
 api = "https://online-go.com/api/v1/"
@@ -40,6 +45,8 @@ fetchPages :: URL -> Producer GamesResponse IO ()
 fetchPages url = do
   page <- lift $ fetchPage url
   yield page
+
+  lift $ threadDelay delay
   case (nextPage page) of
     Just nextURL -> fetchPages nextURL
     Nothing      -> return ()

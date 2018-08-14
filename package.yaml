@@ -27,6 +27,7 @@ dependencies:
 - http-conduit
 - http-client
 - http-client-tls
+- pipes
 
 library:
   source-dirs: src

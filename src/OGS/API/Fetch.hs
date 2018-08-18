@@ -34,14 +34,14 @@ api = "https://online-go.com/api/v1/"
 playerGames :: PlayerID -> URL
 playerGames id = api ++ "players/" ++ (show id) ++ "/games/"
 
-fetchPage :: URL -> IO GamesResponse
+fetchPage :: URL -> IO GameListResponse
 fetchPage url = do
     manager  <- newManager tlsManagerSettings
     response <- parseRequest url >>= httpJSON
 
     return $ getResponseBody response
 
-fetchPages :: URL -> Producer GamesResponse IO ()
+fetchPages :: URL -> Producer GameListResponse IO ()
 fetchPages url = do
   page <- lift $ fetchPage url
   yield page
@@ -51,7 +51,7 @@ fetchPages url = do
     Just nextURL -> fetchPages nextURL
     Nothing      -> return ()
 
-responsesToGames :: Pipe GamesResponse Game IO ()
+responsesToGames :: Pipe GameListResponse Game IO ()
 responsesToGames = forever $ do
     response <- await
     mapM_ yield $ games response

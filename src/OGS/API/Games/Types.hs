@@ -3,7 +3,7 @@
 
 module OGS.API.Games.Types
     ( Game(Game)
-    , GamesResponse(GamesResponse)
+    , GameListResponse(GameListResponse)
     , games
     , nextPage
     ) where
@@ -20,7 +20,7 @@ data Game = Game
     , url   :: String
     } deriving (Eq, Show, Ord)
 
-data GamesResponse = GamesResponse
+data GameListResponse = GameListResponse
     { games    :: [Game]
     , nextPage :: Maybe String
     } deriving (Eq, Show)
@@ -35,9 +35,9 @@ instance FromJSON Game where
 
       return Game{..}
 
-instance FromJSON GamesResponse where
+instance FromJSON GameListResponse where
     parseJSON = withObject "response" $ \o -> do
       games    <- o .: "results"
       nextPage <- o .:? "next"
 
-      return GamesResponse{..}
+      return GameListResponse{..}

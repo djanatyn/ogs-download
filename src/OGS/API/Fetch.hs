@@ -53,8 +53,8 @@ fetchPages url = do
 
 responsesToGames :: Pipe GameListResponse Game IO ()
 responsesToGames = forever $ do
-    response <- await
-    mapM_ yield $ games response
+  response <- await
+  mapM_ yield $ games response
 
 fetchGames :: PlayerID -> Producer Game IO ()
 fetchGames id = (fetchPages $ playerGames id) >-> responsesToGames
